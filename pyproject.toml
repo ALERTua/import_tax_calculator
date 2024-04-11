@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "import-tax-calc"
+version = "0.1.0"
+description = "Import Tax Calculator for Ukraine"
+authors = ["Alexey ALERT Rubasheff <alexey.rubasheff@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.4"
+psycopg = {extras = ["binary", "pool"], version = "^3.1.18"}
+gunicorn = "^21.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
