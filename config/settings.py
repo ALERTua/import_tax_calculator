@@ -16,7 +16,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # DB_DIR is BASE_DIR if on windows, else - /data
-DB_DIR = BASE_DIR if os.name == 'nt' else '/data'
+DB_DIR = BASE_DIR if os.name == 'nt' else Path('/data')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -27,8 +27,9 @@ SECRET_KEY = 'django-insecure-mh%det$mkv06ii)0=pa_fyl3swda@v(7=@&om@4i)ees$)ke!7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS_DEFAULT = ['.localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') or ALLOWED_HOSTS_DEFAULT
+ALLOWED_HOSTS = [_.strip() for _ in ALLOWED_HOSTS]
 
 # Application definition
 
@@ -39,25 +40,27 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "import_tax_calculator.apps.ImportTaxCalculatorConfig"
+    # 'corsheaders',
+    'apps.import_tax_calculator',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
 ]
 
-ROOT_URLCONF = 'import_tax_calc.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'import_tax_calculator', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -70,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'import_tax_calc.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
@@ -117,10 +120,18 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
-
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = ['*']
+CORS_ORIGINS = os.getenv('CORS_ORIGINS', '')
+if CORS_ORIGINS:
+    CORS_ORIGIN_ALLOW_ALL = False
+    CSRF_TRUSTED_ORIGINS = CORS_ORIGINS.split(',')
+    CORS_ORIGIN_WHITELIST = CSRF_TRUSTED_ORIGINS = [_.strip() for _ in CSRF_TRUSTED_ORIGINS]

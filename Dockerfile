@@ -1,8 +1,7 @@
 FROM python:3.12-slim as python-base
 
 ENV \
-    BASE_DIR=/app \
-    SOURCE_DIR_NAME=source
+    BASE_DIR=/app
 
 WORKDIR $BASE_DIR
 
@@ -22,8 +21,7 @@ ENV \
     # venv and requirements path
     VIRTUAL_ENV="$BASE_DIR/venv" \
     # cache path is HOME/.cache
-    CACHE_PATH="/root/.cache" \
-    SOURCE_PATH="$BASE_DIR/$SOURCE_DIR_NAME"
+    CACHE_PATH="/root/.cache"
 
 ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENV/bin:$PATH"
 
@@ -65,13 +63,18 @@ COPY --from=builder-base $VIRTUAL_ENV $VIRTUAL_ENV
 
 WORKDIR $BASE_DIR
 
-COPY poetry.lock pyproject.toml ./
-COPY $SOURCE_DIR_NAME ./$SOURCE_DIR_NAME/
-COPY root /
+# COPY poetry.lock pyproject.toml ./
+# COPY $SOURCE_DIR_NAME ./$SOURCE_DIR_NAME/
+# COPY root /
+COPY . ./
+
+RUN chmod +x ./*.sh
 
 VOLUME /data
 
+ENV PYTHONPATH="$BASE_DIR/apps:$PYTHONPATH"
+
 ENV PORT=8000
-ENV APP_NAME=import_tax_calc
 
 CMD ["./entrypoint.sh"]
+# CMD ["bash"]

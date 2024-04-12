@@ -16,10 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 
-from source.import_tax_calculator.views import CalculateCustomsView
+try:
+    from apps.import_tax_calculator.views import CalculateCustomsView
+except:
+    # noinspection PyUnresolvedReferences
+    from import_tax_calculator.views import CalculateCustomsView
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('calculate/', CalculateCustomsView.as_view(), name='calculate_customs'),
+    path('', CalculateCustomsView.as_view(), name='calculate_customs'),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

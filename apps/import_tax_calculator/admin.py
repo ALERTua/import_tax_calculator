@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from source.import_tax_calculator.models import CustomsConstants, ExchangeRate
+from .models import CustomsConstants, ExchangeRate
 
 
 # Register your models here.
