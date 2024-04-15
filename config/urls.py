@@ -20,11 +20,11 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 try:
-    from apps.import_tax_calculator.views import CalculateCustomsView
+    from apps.import_tax_calculator.views import CalculateCustomsView, health_check
     from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
 except:
     # noinspection PyUnresolvedReferences
-    from import_tax_calculator.views import CalculateCustomsView
+    from import_tax_calculator.views import CalculateCustomsView, health_check
     # noinspection PyUnresolvedReferences
     from import_tax_calculator_api.views import ImportUnitModelAPIView
 
@@ -33,6 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', CalculateCustomsView.as_view(), name='calculate_import_tax'),
     path('calculate_api/', ImportUnitModelAPIView.as_view(), name='calculate_import_tax_api'),
+    path('health/', health_check, name='health_check'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

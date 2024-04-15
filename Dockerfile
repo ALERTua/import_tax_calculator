@@ -61,20 +61,31 @@ FROM python-base as production
 COPY --from=builder-base $POETRY_HOME $POETRY_HOME
 COPY --from=builder-base $VIRTUAL_ENV $VIRTUAL_ENV
 
+RUN \
+    apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR $BASE_DIR
 
-# COPY poetry.lock pyproject.toml ./
-# COPY $SOURCE_DIR_NAME ./$SOURCE_DIR_NAME/
-# COPY root /
 COPY . ./
 
 RUN chmod +x ./*.sh
 
 VOLUME /data
 
-ENV PYTHONPATH="$BASE_DIR/apps:$PYTHONPATH"
+ENV \
+    PYTHONPATH="$BASE_DIR/apps:$PYTHONPATH" \
+    PORT=8000 \
+    PYTHONIOENCODING=utf-8 \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
 
-ENV PORT=8000
+EXPOSE $PORT
+
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
+        CMD curl localhost:${PORT}/health || exit 1
 
 CMD ["./entrypoint.sh"]
-# CMD ["bash"]
