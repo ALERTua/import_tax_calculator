@@ -10,3 +10,6 @@ This Django project provides a web-based customs tax calculator for calculating 
 Do not forget to run with --init for SIGTERM to correctly forward to child processes.
 
 [Amazon Userscript](userscripts/README.md)
+
+## GitHub
+https://github.com/ALERTua/import_tax_calculator
