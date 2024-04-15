@@ -1,16 +1,19 @@
 from copy import copy
-
+from enum import Enum
 from django.db import models
 
 
+class Currency(Enum):
+    EUR = 'Euro'
+    USD = 'US Dollar'
+
+
 class ImportUnit(models.Model):
-    currency_choices = [
-        ('EUR', 'Euro'),
-        ('USD', 'US Dollar'),
-    ]
+    currency_choices = [(_.name, _.value) for _ in Currency]
 
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Price')
-    currency = models.CharField(max_length=3, choices=currency_choices, default='EUR', verbose_name='Currency')
+    currency = models.CharField(max_length=3, choices=currency_choices, default=Currency.EUR,
+                                verbose_name=Currency.__class__.__name__)
 
     def __str__(self):
         return f"{self.__class__.__name__}: {self.price} {self.currency}"
@@ -56,3 +59,7 @@ class ExchangeRate(models.Model):
 
     def __str__(self):
         return f"Exchange Rate: 1 EURO = {self.euro_to_usd} USD"
+
+
+if __name__ == '__main__':
+    pass

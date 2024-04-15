@@ -15,20 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
 try:
     from apps.import_tax_calculator.views import CalculateCustomsView
+    from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
 except:
     # noinspection PyUnresolvedReferences
     from import_tax_calculator.views import CalculateCustomsView
+    # noinspection PyUnresolvedReferences
+    from import_tax_calculator_api.views import ImportUnitModelAPIView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', CalculateCustomsView.as_view(), name='calculate_customs'),
+    path('', CalculateCustomsView.as_view(), name='calculate_import_tax'),
+    path('calculate_api/', ImportUnitModelAPIView.as_view(), name='calculate_import_tax_api'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

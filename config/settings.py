@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS_DEFAULT = ['.localhost', '127.0.0.1', '[::1]']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') or ALLOWED_HOSTS_DEFAULT
-ALLOWED_HOSTS = [_.strip() for _ in ALLOWED_HOSTS]
+ALLOWED_HOSTS = [_.strip() for _ in ALLOWED_HOSTS] + ALLOWED_HOSTS_DEFAULT
 
 # Application definition
 
@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'corsheaders',
+    'rest_framework',
     'apps.import_tax_calculator',
+    'apps.import_tax_calculator_api',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = []
 CORS_ORIGINS = os.getenv('CORS_ORIGINS', '')
 if CORS_ORIGINS:
     CORS_ORIGIN_ALLOW_ALL = False

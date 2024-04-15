@@ -13,7 +13,7 @@ class CalculateCustomsView(FormView):
         currency = form.cleaned_data['currency']
 
         import_unit = ImportUnit(price=price, currency=currency)
-        import_unit.save()
+        # import_unit.save()
 
         tax = import_unit.calculate_tax()
 
