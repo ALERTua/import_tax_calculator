@@ -22,7 +22,7 @@ set DOCKER_EXE=docker
 rem set DOCKER_OPTS=--insecure-registry=%DOCKER_REGISTRY%
 set DOCKER_OPTS=--max-concurrent-uploads=10 --max-concurrent-downloads=10
 
-docker --version
+"%DOCKER_EXE%" --version
 
 echo DOCKER_REMOTE: %DOCKER_REMOTE%
 if defined DOCKER_HOST echo DOCKER_HOST: %DOCKER_HOST%
