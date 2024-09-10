@@ -7,15 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
-django = "^5.0.7"
+django = "^5.1.1"
 psycopg = {version = "^3.2.1", extras = ["binary", "pool"]}
-gunicorn = "^22.0.0"
+gunicorn = "^23.0.0"
 django-cors-headers = "^4.4.0"
 djangorestframework = "^3.15.2"
 
-
 [tool.poetry.group.dev.dependencies]
-poetry = "^1.8.2"
+poetry = "^1.8.3"
 pytest = "^8.3.2"
 
 [build-system]
