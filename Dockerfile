@@ -49,6 +49,8 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY --from=builder $APP_DIR $APP_DIR
 
+RUN chmod -R +x $APP_DIR/*.sh
+
 EXPOSE $PORT
 
 VOLUME /data
@@ -62,8 +64,6 @@ RUN useradd -ms /bin/bash $USERNAME
 USER $USERNAME
 
 COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
-
-RUN chmod -R +x $APP_DIR/*.sh
 
 HEALTHCHECK \
     --interval=10s --timeout=5s --start-period=10s --retries=5 \
