@@ -63,6 +63,8 @@ USER $USERNAME
 
 COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
 
+RUN chmod -R +x $APP_DIR/*.sh
+
 HEALTHCHECK \
     --interval=10s --timeout=5s --start-period=10s --retries=5 \
     CMD curl localhost:${PORT}/health || exit 1
