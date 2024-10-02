@@ -1,91 +1,70 @@
-FROM python:3.12-slim AS python-base
+FROM python:3.12-slim AS builder
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+
+ENV APP_DIR=/app
 
 ENV \
-    BASE_DIR=/app
-
-WORKDIR $BASE_DIR
-
-ENV \
+    # OS
+    PORT=8000 \
+    # uv
+    UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy \
+    UV_PYTHON_DOWNLOADS=never \
+    UV_CACHE_DIR="$APP_DIR/.uv_cache" \
     # Python
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONIOENCODING=utf-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
+    # LC_ALL=en_US.UTF-8 \
     # pip
     PIP_DISABLE_PIP_VERSION_CHECK=on \
-    # poetry
-    POETRY_HOME="$BASE_DIR/poetry" \
-    POETRY_NO_INTERACTION=1 \
-    POETRY_VIRTUALENVS_CREATE=false \
     # venv and requirements path
-    VIRTUAL_ENV="$BASE_DIR/venv" \
-    # cache path is HOME/.cache
-    CACHE_PATH="/root/.cache"
+    VIRTUAL_ENV="$APP_DIR/.venv" \
+    PYTHONPATH="$APP_DIR/apps:$PYTHONPATH"
 
-ENV PATH="$POETRY_HOME/bin:$VIRTUAL_ENV/bin:$PATH"
+WORKDIR $APP_DIR
 
-RUN python -m venv $VIRTUAL_ENV
+# Cache and bind mounts for uv
+RUN \
+    --mount=type=cache,target=$UV_CACHE_DIR \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --frozen --no-install-project --no-dev
 
-ENV PYTHONPATH="$BASE_DIR:$PYTHONPATH"
+ADD . .
 
-
-FROM python-base AS builder-base
-
-RUN apt-get update && \
-    apt-get install -y curl
-
-RUN --mount=type=cache,target=$CACHE_PATH \
-    curl -sSL https://install.python-poetry.org | python -
-
-WORKDIR $BASE_DIR
-
-COPY poetry.lock pyproject.toml ./
-
-RUN --mount=type=cache,target=$CACHE_PATH \
-    poetry install --no-root --only main --compile
-
-
-FROM builder-base AS development
-
-WORKDIR $BASE_DIR
-
-RUN --mount=type=cache,target=$CACHE_PATH \
-    poetry install --no-root --compile
+# Cache mount again for uv sync
+RUN \
+    --mount=type=cache,target=$UV_CACHE_DIR \
+    uv sync --frozen --no-dev
 
 CMD ["bash"]
 
+FROM builder AS development
 
-FROM python-base AS production
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY --from=builder-base $POETRY_HOME $POETRY_HOME
-COPY --from=builder-base $VIRTUAL_ENV $VIRTUAL_ENV
-
-RUN \
-    apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR $BASE_DIR
-
-COPY . ./
-
-RUN chmod +x ./*.sh
-
-VOLUME /data
-
-ENV \
-    PYTHONPATH="$BASE_DIR/apps:$PYTHONPATH" \
-    PORT=8000 \
-    PYTHONIOENCODING=utf-8 \
-    LC_ALL=en_US.UTF-8 \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8
+COPY --from=builder $APP_DIR $APP_DIR
 
 EXPOSE $PORT
 
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
-        CMD curl localhost:${PORT}/health || exit 1
+VOLUME /data
+
+FROM development AS production
+
+ENV USERNAME=nonroot
+
+RUN useradd -ms /bin/bash $USERNAME
+
+USER $USERNAME
+
+COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
+
+HEALTHCHECK \
+    --interval=10s --timeout=5s --start-period=10s --retries=5 \
+    CMD curl localhost:${PORT}/health || exit 1
 
 CMD ["./entrypoint.sh"]

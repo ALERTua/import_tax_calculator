@@ -1,15 +1,11 @@
 #!/bin/bash
 echo "entrypoint"
 
-export PYTHONIOENCODING=utf-8
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-
-cd $BASE_DIR || (echo "Cannot CD to $BASE_DIR. Exiting" & exit)
-
 port=${PORT:-8000}
-
 echo "$port @ $(pwd)"
+
+whoami
+echo "test" >> /etc/passwd
 
 ls -lA
 python -V
