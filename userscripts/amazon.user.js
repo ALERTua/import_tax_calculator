@@ -5,7 +5,9 @@
 // @description  Calculate Ukraine customs tax for Amazon products
 // @author       Alexey ALERT Rubasheff
 // @match        https://www.amazon.com/*/dp/*
+// @match        https://www.amazon.com/dp/*
 // @match        https://www.amazon.*/dp/*
+// @match        https://www.amazon.*/*/dp/*
 // @match        https://www.amazon.*/gp/product/*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
