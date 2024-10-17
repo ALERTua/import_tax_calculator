@@ -4,11 +4,31 @@
 // @version      1.0
 // @description  Calculate Ukraine customs tax for Amazon products
 // @author       Alexey ALERT Rubasheff
-// @match        https://www.amazon.com/*/dp/*
-// @match        https://www.amazon.com/dp/*
-// @match        https://www.amazon.*/dp/*
-// @match        https://www.amazon.*/*/dp/*
-// @match        https://www.amazon.*/gp/product/*
+// @match        *://www.amazon.com/*
+// @match        *://www.amazon.ae/*
+// @match        *://www.amazon.be/*
+// @match        *://www.amazon.ca/*
+// @match        *://www.amazon.cn/*
+// @match        *://www.amazon.co.jp/*
+// @match        *://www.amazon.co.uk/*
+// @match        *://www.amazon.co.za/*
+// @match        *://www.amazon.com.au/*
+// @match        *://www.amazon.com.br/*
+// @match        *://www.amazon.com.mx/*
+// @match        *://www.amazon.com.tr/*
+// @match        *://www.amazon.com/*
+// @match        *://www.amazon.de/*
+// @match        *://www.amazon.eg/*
+// @match        *://www.amazon.es/*
+// @match        *://www.amazon.fr/*
+// @match        *://www.amazon.in/*
+// @match        *://www.amazon.it/*
+// @match        *://www.amazon.nl/*
+// @match        *://www.amazon.pl/*
+// @match        *://www.amazon.sa/*
+// @match        *://www.amazon.se/*
+// @match        *://www.amazon.sg/*
+// @exclude      *://*.amazon.*/ap/signin*
 // @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
