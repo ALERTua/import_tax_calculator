@@ -7,6 +7,6 @@
 docker kill %CONTAINER_NAME%
 docker rm %CONTAINER_NAME%
 docker build -f %DOCKERFILENAME% --target %STAGE% -t %CONTAINER_NAME%:latest . || exit /b 1
-docker run -p "8000:8000/tcp" -e ALLOWED_HOSTS=gitlab --name %CONTAINER_NAME% -t -d %CONTAINER_NAME% || exit /b 1
+docker run --init --env-file="%~dp0..\.dockerenv" --name %CONTAINER_NAME% -t -d %CONTAINER_NAME% || exit /b 1
 where nircmd >nul 2>nul && nircmd beep 500 500
 docker exec -it %CONTAINER_NAME% bash
