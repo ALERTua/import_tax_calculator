@@ -4,6 +4,8 @@
 // @version      1.0
 // @description  Calculate Ukraine customs tax for Amazon products
 // @author       Alexey ALERT Rubasheff
+// @homepageURL  https://github.com/ALERTua/import_tax_calculator/blob/main/userscripts/amazon.user.js
+// @source       https://github.com/ALERTua/import_tax_calculator/raw/refs/heads/main/userscripts/amazon.user.js
 // @match        *://www.amazon.com/*
 // @match        *://www.amazon.ae/*
 // @match        *://www.amazon.be/*
