@@ -10,7 +10,7 @@ ENV \
     # OS
     PORT=8000 \
     # uv
-    UV_COMPILE_BYTECODE=1 \
+#     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never \
     UV_CACHE_DIR="$APP_DIR/.uv_cache" \
@@ -53,7 +53,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY --from=builder $APP_DIR $APP_DIR
 
-RUN chmod -R +x $APP_DIR/*.sh
+# RUN chmod -R +x $APP_DIR/*.sh
 
 EXPOSE $PORT
 
@@ -75,6 +75,10 @@ USER $USERNAME
 COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
 
 HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
-        CMD python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:${PORT}/health', timeout=1)"
+    CMD uv run python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:${PORT}/health', timeout=1)"
 
-CMD ["./entrypoint.sh"]
+CMD \
+  uv run python manage.py makemigrations --noinput ; \
+  uv run python manage.py migrate --noinput ; \
+  uv run python manage.py collectstatic --noinput ; \
+  uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers 3 --log-level=info
