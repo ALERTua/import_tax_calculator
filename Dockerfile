@@ -2,15 +2,13 @@ ARG PYTHON_VERSION=3.13
 
 FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-trixie-slim AS builder
 
-# COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
-
 ENV APP_DIR=/app
 
 ENV \
     # OS
     PORT=8000 \
     # uv
-#     UV_COMPILE_BYTECODE=1 \
+    UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PYTHON_DOWNLOADS=never \
     UV_CACHE_DIR="$APP_DIR/.uv_cache" \
@@ -52,8 +50,6 @@ FROM builder AS development
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY --from=builder $APP_DIR $APP_DIR
-
-# RUN chmod -R +x $APP_DIR/*.sh
 
 EXPOSE $PORT
 
