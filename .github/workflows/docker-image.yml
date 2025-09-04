@@ -4,8 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths-ignore:
+      - '.pre-commit-config.yaml'
+      - 'userscript/'
+      - 'script/'
+      - '.github/'
 
 env:
   REGISTRY: ghcr.io
@@ -59,7 +62,7 @@ jobs:
 #          password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build and push
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         env:
           DOCKER_BUILDKIT: 1
         with:
