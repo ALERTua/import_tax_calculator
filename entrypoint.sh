@@ -8,11 +8,11 @@ whoami
 echo "test" >> /etc/passwd
 
 ls -lA
-python -V
-python manage.py makemigrations --noinput
-python manage.py migrate --noinput
-python manage.py collectstatic --noinput
+uv run python -V
+uv run python manage.py makemigrations --noinput
+uv run python manage.py migrate --noinput
+uv run python manage.py collectstatic --noinput
 
-gunicorn config.wsgi:application --bind 0.0.0.0:"$port" --workers 3 --log-level=info
+uv run gunicorn config.wsgi:application --bind 0.0.0.0:"$port" --workers 3 --log-level=info
 
 echo "entrypoint done"

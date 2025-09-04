@@ -1,6 +1,8 @@
-FROM python:3.12-slim AS builder
+ARG PYTHON_VERSION=3.13
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
+FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-trixie-slim AS builder
+
+# COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 ENV APP_DIR=/app
 
@@ -43,6 +45,8 @@ RUN \
 
 CMD ["bash"]
 
+
+# ----------------------------------------------
 FROM builder AS development
 
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
@@ -55,18 +59,22 @@ EXPOSE $PORT
 
 VOLUME /data
 
+
+# ---------------------------------------------
 FROM development AS production
 
 ENV USERNAME=nonroot
 
-RUN useradd -ms /bin/bash $USERNAME
+RUN \
+    useradd -ms /bin/bash $USERNAME \
+    && mkdir -p $UV_CACHE_DIR \
+    && chown -R $USERNAME $UV_CACHE_DIR
 
 USER $USERNAME
 
 COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
 
-HEALTHCHECK \
-    --interval=10s --timeout=5s --start-period=10s --retries=5 \
-    CMD curl localhost:${PORT}/health || exit 1
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
+        CMD python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:${PORT}/health', timeout=1)"
 
 CMD ["./entrypoint.sh"]
