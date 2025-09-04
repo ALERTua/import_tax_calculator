@@ -1,19 +1,14 @@
 [project]
 name = "import-tax-calc"
-version = "0.1.0"
+version = "0"
 description = "Import Tax Calculator for Ukraine"
 authors = ["Alexey ALERT Rubasheff <alexey.rubasheff@gmail.com>"]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "django>=5.1.1",
-    "django-cors-headers>=4.4.0",
-    "djangorestframework>=3.15.2",
+    "django>=5.2.6",
+    "django-cors-headers>=4.7.0",
+    "djangorestframework>=3.16.1",
     "gunicorn>=23.0.0",
-    "psycopg[binary,pool]>=3.2.3",
-]
-
-[tool.uv]
-dev-dependencies = [
-    "pytest>=8.3.3",
+    "psycopg[binary,pool]>=3.2.9",
 ]
