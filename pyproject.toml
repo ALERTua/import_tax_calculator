@@ -4,11 +4,16 @@ version = "0"
 description = "Import Tax Calculator for Ukraine"
 authors = ["Alexey ALERT Rubasheff <alexey.rubasheff@gmail.com>"]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.14"
 dependencies = [
-    "django>=5.2.6",
-    "django-cors-headers>=4.7.0",
+    "django>=6.0",
+    "django-cors-headers>=4.9.0",
     "djangorestframework>=3.16.1",
     "gunicorn>=23.0.0",
-    "psycopg[binary,pool]>=3.2.9",
+    "psycopg[binary,pool]>=3.3.2",
+]
+
+[dependency-groups]
+dev = [
+    "djangorestframework-stubs>=3.16.6",
 ]
