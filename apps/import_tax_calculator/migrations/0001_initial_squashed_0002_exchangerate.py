@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             name='ExchangeRate',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('euro_to_usd', models.DecimalField(decimal_places=2, default=1.07, max_digits=6)),
+                ('euro_to_usd', models.DecimalField(decimal_places=2, default=1.18, max_digits=6)),
             ],
         ),
     ]

@@ -55,7 +55,7 @@ class CustomsConstants(models.Model):
 
 
 class ExchangeRate(models.Model):
-    euro_to_usd = models.DecimalField(max_digits=6, decimal_places=2, default=1.07)
+    euro_to_usd = models.DecimalField(max_digits=6, decimal_places=2, default=1.18)
 
     def __str__(self):
         return f"Exchange Rate: 1 EURO = {self.euro_to_usd} USD"
