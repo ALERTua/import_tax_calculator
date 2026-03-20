@@ -25,7 +25,7 @@ DB_DIR = BASE_DIR if os.name == 'nt' else Path('/data')
 SECRET_KEY = 'django-insecure-mh%det$mkv06ii)0=pa_fyl3swda@v(7=@&om@4i)ees$)ke!7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS_DEFAULT = ['.localhost', '127.0.0.1', '[::1]']
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') or ALLOWED_HOSTS_DEFAULT

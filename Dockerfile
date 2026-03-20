@@ -7,6 +7,8 @@ ENV APP_DIR=/app
 ENV \
     # OS
     PORT=8000 \
+    WORKERS=1 \
+    DEBUG=False \
     # uv
     UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
@@ -77,4 +79,4 @@ CMD \
   uv run python manage.py makemigrations --noinput ; \
   uv run python manage.py migrate --noinput ; \
   uv run python manage.py collectstatic --noinput ; \
-  uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers 3 --log-level=info
+  uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers ${WORKERS} --log-level=info
