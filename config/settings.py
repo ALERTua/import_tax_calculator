@@ -22,11 +22,17 @@ DB_DIR = BASE_DIR if os.name == "nt" else Path("/data")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-mh%det$mkv06ii)0=pa_fyl3swda@v(7=@&om@4i)ees$)ke!7"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# Use environment variable in production, fallback to generated key only for development (DEBUG=True)
+# This fallback is intentionally insecure and should NEVER be used in production
+SECRET_KEY = os.environ.get("SECRET_KEY") or ("dev-secret-key-" + os.urandom(32).hex() if DEBUG else None)
+if SECRET_KEY is None:
+    error_msg = "SECRET_KEY environment variable is required in production"
+    raise ValueError(error_msg)
+
 
 ALLOWED_HOSTS_DEFAULT = [".localhost", "127.0.0.1", "[::1]"]
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") or ALLOWED_HOSTS_DEFAULT
@@ -54,7 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # 'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.csrf.CsrfViewMiddleware",
     # 'corsheaders.middleware.CorsMiddleware',
 ]
 
