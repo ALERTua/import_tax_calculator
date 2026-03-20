@@ -27,6 +27,11 @@ class ImportUnit(models.Model):
         verbose_name=Currency.__class__.__name__,
     )
 
+    class Meta:
+        """Meta options for ImportUnit model."""
+
+        app_label = "import_tax_calculator"
+
     def __str__(self) -> str:
         """Return string representation of the ImportUnit."""
         return f"{self.__class__.__name__}: {self.price} {self.currency}"
@@ -80,6 +85,11 @@ class CustomsConstants(models.Model):
     duty_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.10, verbose_name="Duty rate")
     vat_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.20, verbose_name="VAT rate")
 
+    class Meta:
+        """Meta options for CustomsConstants model."""
+
+        app_label = "import_tax_calculator"
+
     def __str__(self) -> str:
         """Return string representation of the CustomsConstants."""
         return f"{self.__class__.__name__}"
@@ -89,6 +99,11 @@ class ExchangeRate(models.Model):
     """Model representing exchange rate (EUR to USD)."""
 
     euro_to_usd = models.DecimalField(max_digits=6, decimal_places=2, default=1.18)
+
+    class Meta:
+        """Meta options for ExchangeRate model."""
+
+        app_label = "import_tax_calculator"
 
     def __str__(self) -> str:
         """Return string representation of the ExchangeRate."""
