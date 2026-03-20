@@ -1,22 +1,16 @@
 """Views for import_tax_calculator_api app."""
 
-from __future__ import annotations
-
 from typing import TYPE_CHECKING
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ..import_tax_calculator.models import ImportUnit
 from .serializers import ImportUnitSerializer
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
-
-try:
-    from apps.import_tax_calculator.models import ImportUnit
-except ImportError:
-    from import_tax_calculator.models import ImportUnit
 
 
 class ImportUnitModelAPIView(APIView):
