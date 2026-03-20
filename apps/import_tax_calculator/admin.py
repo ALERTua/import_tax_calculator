@@ -1,14 +1,15 @@
+"""Admin configuration for import_tax_calculator models."""
+
 from django.contrib import admin
 
 from .models import CustomsConstants, ExchangeRate
 
 
-# Register your models here.
 @admin.register(CustomsConstants)
 class CustomsConstantsAdmin(admin.ModelAdmin):
-    pass
+    """Admin interface for CustomsConstants model."""
 
 
 @admin.register(ExchangeRate)
 class ExchangeRateAdmin(admin.ModelAdmin):
-    pass
+    """Admin interface for ExchangeRate model."""

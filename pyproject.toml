@@ -2,7 +2,6 @@
 name = "import-tax-calc"
 version = "0"
 description = "Import Tax Calculator for Ukraine"
-authors = ["Alexey ALERT Rubasheff <alexey.rubasheff@gmail.com>"]
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

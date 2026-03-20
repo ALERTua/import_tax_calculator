@@ -3,6 +3,7 @@ URL configuration for import_tax_calc project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
+
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -13,27 +14,34 @@ Class-based views
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+
 """
-from django.contrib import admin
-from django.urls import path, include
-from django.conf.urls.static import static
+
 from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path
 
 try:
     from apps.import_tax_calculator.views import CalculateCustomsView, health_check
     from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
-except:
+except ImportError:
     # noinspection PyUnresolvedReferences
     from import_tax_calculator.views import CalculateCustomsView, health_check
+
     # noinspection PyUnresolvedReferences
     from import_tax_calculator_api.views import ImportUnitModelAPIView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', CalculateCustomsView.as_view(), name='calculate_import_tax'),
-    path('calculate_api/', ImportUnitModelAPIView.as_view(), name='calculate_import_tax_api'),
-    path('health/', health_check, name='health_check'),
+    path("admin/", admin.site.urls),
+    path("", CalculateCustomsView.as_view(), name="calculate_import_tax"),
+    path(
+        "calculate_api/",
+        ImportUnitModelAPIView.as_view(),
+        name="calculate_import_tax_api",
+    ),
+    path("health/", health_check, name="health_check"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

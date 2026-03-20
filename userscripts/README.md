@@ -1,5 +1,5 @@
 1. Встановити GreaseMonkey
-2. Відкрити скрипт [amazon.user.js](amazon.user.js) 
+2. Відкрити скрипт [amazon.user.js](amazon.user.js)
 3. Підтвердити встановлення скрипту.
 4. Якщо при відкритті амазону спитає - натиснути Always Allow
 

@@ -1,24 +1,48 @@
+"""Models for import_tax_calculator app."""
+
 from copy import copy
 from enum import Enum
+from typing import ClassVar
+
 from django.db import models
 
 
 class Currency(Enum):
-    EUR = 'Euro'
-    USD = 'US Dollar'
+    """Enumeration of supported currencies."""
+
+    EUR = "Euro"
+    USD = "US Dollar"
 
 
 class ImportUnit(models.Model):
-    currency_choices = [(_.name, _.value) for _ in Currency]
+    """Model representing an imported unit with price and currency information."""
 
-    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Price')
-    currency = models.CharField(max_length=3, choices=currency_choices, default=Currency.EUR,
-                                verbose_name=Currency.__class__.__name__)
+    currency_choices: ClassVar[list[tuple[str, str]]] = [(_.name, _.value) for _ in Currency]
 
-    def __str__(self):
+    price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Price")
+    currency = models.CharField(
+        max_length=3,
+        choices=currency_choices,
+        default=Currency.EUR,
+        verbose_name=Currency.__class__.__name__,
+    )
+
+    def __str__(self) -> str:
+        """Return string representation of the ImportUnit."""
         return f"{self.__class__.__name__}: {self.price} {self.currency}"
 
-    def calculate_tax(self):
+    def calculate_tax(self) -> float | None:
+        """
+        Calculate the customs tax for this import unit.
+
+        Calculates duty and VAT based on the customs constants and exchange rates.
+        Returns 0 if the price is at or below the customs limit.
+
+        Returns:
+            The total tax amount (duty + VAT) rounded to 1 decimal place,
+            or None if customs constants or exchange rate are not configured.
+
+        """
         customs_constants = CustomsConstants.objects.first()
 
         if not customs_constants:
@@ -31,7 +55,7 @@ class ImportUnit(models.Model):
             return None
 
         price_euro = copy(self.price)
-        if self.currency == 'USD':
+        if self.currency == "USD":
             price_euro = self.price / exchange_rate.euro_to_usd
 
         if price_euro <= customs_constants.limit:
@@ -41,25 +65,35 @@ class ImportUnit(models.Model):
         duty = excess * customs_constants.duty_rate
         vat = (excess + duty) * customs_constants.vat_rate
         total_tax = duty + vat
-        output = round(float(total_tax), 1)
-        return output
+        return round(float(total_tax), 1)
 
 
 class CustomsConstants(models.Model):
-    limit = models.DecimalField(max_digits=10, decimal_places=2, default=150, verbose_name='Limit for customs clearance')
-    duty_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.10, verbose_name='Duty rate')
-    vat_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.20, verbose_name='VAT rate')
+    """Model representing customs constants (limit, duty rate, VAT rate)."""
 
-    def __str__(self):
+    limit = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=150,
+        verbose_name="Limit for customs clearance",
+    )
+    duty_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.10, verbose_name="Duty rate")
+    vat_rate = models.DecimalField(max_digits=4, decimal_places=2, default=0.20, verbose_name="VAT rate")
+
+    def __str__(self) -> str:
+        """Return string representation of the CustomsConstants."""
         return f"{self.__class__.__name__}"
 
 
 class ExchangeRate(models.Model):
+    """Model representing exchange rate (EUR to USD)."""
+
     euro_to_usd = models.DecimalField(max_digits=6, decimal_places=2, default=1.18)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        """Return string representation of the ExchangeRate."""
         return f"Exchange Rate: 1 EURO = {self.euro_to_usd} USD"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass

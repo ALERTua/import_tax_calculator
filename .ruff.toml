@@ -1,0 +1,43 @@
+line-length = 120
+indent-width = 4
+
+exclude = [
+    ".git",
+    ".ruff_cache",
+    ".tox",
+    ".venv*",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "**/migrations/",
+]
+
+[lint]
+select = [
+    "ALL",
+]
+
+ignore = [
+    "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
+    "D203", # no-blank-line-before-class (incompatible with formatter)
+    "D212", # multi-line-summary-first-line (incompatible with formatter)
+    "COM812", # incompatible with formatter
+    "ISC001", # incompatible with formatter
+    "S101", # Use of assert detected (allowed in tests)
+    "S105", # Possible hardcoded password (intentional for dev SECRET_KEY)
+    "TD002", # Missing author in TODO
+    "TD003", # Missing issue link for TODO
+    "FIX002", # Line contains TODO
+    "PLC0415", # import should be at top-level of a file (manage.py import pattern)
+]
+
+[lint.flake8-pytest-style]
+fixture-parentheses = false
+
+[lint.pyupgrade]
+keep-runtime-typing = true
+
+[lint.mccabe]
+max-complexity = 25
