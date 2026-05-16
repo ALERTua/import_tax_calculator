@@ -35,8 +35,8 @@ if SECRET_KEY is None:
 
 
 ALLOWED_HOSTS_DEFAULT = [".localhost", "127.0.0.1", "[::1]"]
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",") or ALLOWED_HOSTS_DEFAULT
-ALLOWED_HOSTS = [_.strip() for _ in ALLOWED_HOSTS] + ALLOWED_HOSTS_DEFAULT
+_allowed_hosts_extra = [_.strip() for _ in os.environ.get("ALLOWED_HOSTS", "").split(",") if _.strip()]
+ALLOWED_HOSTS = _allowed_hosts_extra + ALLOWED_HOSTS_DEFAULT
 
 # Application definition
 
