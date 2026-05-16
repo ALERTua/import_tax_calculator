@@ -3,8 +3,6 @@ name: Tests
 on:
   workflow_call:
   workflow_dispatch:
-  push:
-    branches: [main]
   pull_request:
 
 concurrency:
@@ -33,7 +31,7 @@ jobs:
         run: uv sync --frozen
 
       - name: Ruff
-        run: uv run ruff check .
+        run: uvx ruff check .
 
       - name: makemigrations --check
         run: uv run python manage.py makemigrations --check --dry-run
