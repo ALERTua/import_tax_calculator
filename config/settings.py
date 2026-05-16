@@ -26,9 +26,9 @@ DB_DIR = BASE_DIR if os.name == "nt" else Path("/data")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# Use environment variable in production, fallback to generated key only for development (DEBUG=True)
-# This fallback is intentionally insecure and should NEVER be used in production
-SECRET_KEY = os.environ.get("SECRET_KEY") or ("dev-secret-key-" + os.urandom(32).hex() if DEBUG else None)
+# A stable insecure fallback is used in DEBUG so sessions/CSRF tokens survive restarts.
+# This fallback is intentionally insecure and must NEVER be used with DEBUG=False.
+SECRET_KEY = os.environ.get("SECRET_KEY") or ("insecure-dev-key-do-not-use-in-production" if DEBUG else None)
 if SECRET_KEY is None:
     error_msg = "SECRET_KEY environment variable is required in production"
     raise ValueError(error_msg)
@@ -47,13 +47,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # 'corsheaders',
+    "corsheaders",
     "rest_framework",
+    "drf_spectacular",
     "apps.import_tax_calculator",
     "apps.import_tax_calculator_api",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -61,8 +63,20 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    # 'corsheaders.middleware.CorsMiddleware',
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_THROTTLE_CLASSES": ["rest_framework.throttling.AnonRateThrottle"],
+    "DEFAULT_THROTTLE_RATES": {"anon": "300/min"},
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Import Tax Calculator API",
+    "DESCRIPTION": "Calculate Ukraine customs tax for import units",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+}
 
 ROOT_URLCONF = "config.urls"
 
@@ -137,10 +151,12 @@ STATIC_ROOT = Path(BASE_DIR) / "static"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ORIGIN_ALLOW_ALL = True
-CSRF_TRUSTED_ORIGINS = []
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "")
-if CORS_ORIGINS:
-    CORS_ORIGIN_ALLOW_ALL = False
-    CSRF_TRUSTED_ORIGINS = CORS_ORIGINS.split(",")
-    CORS_ORIGIN_WHITELIST = CSRF_TRUSTED_ORIGINS = [_.strip() for _ in CSRF_TRUSTED_ORIGINS]
+_cors_origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
+if _cors_origins:
+    CORS_ALLOW_ALL_ORIGINS = False
+    CORS_ALLOWED_ORIGINS = _cors_origins
+    CSRF_TRUSTED_ORIGINS = _cors_origins
+else:
+    # No explicit allowlist → permissive for read-only, public API. Tighten via CORS_ORIGINS in production.
+    CORS_ALLOW_ALL_ORIGINS = True
+    CSRF_TRUSTED_ORIGINS = []

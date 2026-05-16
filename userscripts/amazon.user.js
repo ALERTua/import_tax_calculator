@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Amazon Ukraine Customs Tax Calculator
 // @namespace    https://www.amazon.com
-// @version      1.1.1
+// @version      1.2.0
 // @description  Calculate Ukraine customs tax for Amazon products
 // @author       Alexey ALERT Rubasheff
 // @homepageURL  https://github.com/ALERTua/import_tax_calculator/blob/main/userscripts/amazon.user.js
@@ -154,14 +154,35 @@
     console.info('Customs Tax Calculator initialized');
     scan();
 
+    // Coalesce mutation bursts. Amazon's SPA fires many tiny mutations during reflow;
+    // we don't want to scan the DOM on each one. Buffer added nodes and flush on idle.
+    const pendingRoots = new Set();
+    let scheduled = false;
+
+    function flush() {
+        scheduled = false;
+        for (const root of pendingRoots) {
+            if (root.matches && root.matches('.a-price span.a-offscreen')) processOffscreen(root);
+            else if (root.querySelectorAll) scan(root);
+        }
+        pendingRoots.clear();
+    }
+
+    function schedule() {
+        if (scheduled) return;
+        scheduled = true;
+        const ric = window.requestIdleCallback || function (cb) { return setTimeout(cb, 200); };
+        ric(flush, { timeout: 500 });
+    }
+
     const observer = new MutationObserver(function (mutations) {
         for (const m of mutations) {
             for (const node of m.addedNodes) {
                 if (node.nodeType !== 1) continue;
-                if (node.matches && node.matches('.a-price span.a-offscreen')) processOffscreen(node);
-                else if (node.querySelectorAll) scan(node);
+                pendingRoots.add(node);
             }
         }
+        if (pendingRoots.size) schedule();
     });
     observer.observe(document.body, { childList: true, subtree: true });
 })();

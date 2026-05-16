@@ -3,6 +3,7 @@
 from typing import TYPE_CHECKING
 
 from django.utils.cache import patch_cache_control
+from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,6 +19,16 @@ if TYPE_CHECKING:
 class ImportUnitModelAPIView(APIView):
     """API view for ImportUnit model operations."""
 
+    serializer_class = ImportUnitSerializer
+
+    @extend_schema(
+        parameters=[ImportUnitSerializer],
+        responses={
+            200: ImportUnitSerializer,
+            400: OpenApiResponse(description="Validation error"),
+            503: OpenApiResponse(description="Backend constants not configured"),
+        },
+    )
     def get(self, request: HttpRequest) -> Response:
         """Calculate import tax for the given price + currency query params."""
         serializer = ImportUnitSerializer(data=request.query_params)

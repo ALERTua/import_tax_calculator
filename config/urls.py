@@ -21,10 +21,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 from apps.import_tax_calculator.views import CalculateCustomsView, health_check
 from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
-
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -35,6 +35,8 @@ urlpatterns = [
         name="calculate_import_tax_api",
     ),
     path("health/", health_check, name="health_check"),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/schema/swagger-ui/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
