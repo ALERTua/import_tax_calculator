@@ -90,7 +90,13 @@ class ImportUnit(models.Model):
         excess = price_euro - customs_constants.limit
         duty = excess * customs_constants.duty_rate
         vat = (excess + duty) * customs_constants.vat_rate
-        total_tax = duty + vat
+        total_tax_eur = duty + vat
+
+        # Return the tax in the same currency the caller used, so the label matches the price
+        total_tax = total_tax_eur
+        if self.currency == Currency.USD.name:
+            total_tax = total_tax_eur * exchange_rate.euro_to_usd
+
         return total_tax.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)
 
 

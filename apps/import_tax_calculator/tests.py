@@ -38,6 +38,14 @@ class ImportUnitTaxCalculationTestCase(TestCase):
         tax = invoice.calculate_tax()
         assert abs(tax - Decimal("6.4")) < TOLERANCE
 
+    def test_tax_in_usd_returned_in_usd(self) -> None:
+        """USD input → tax returned in USD (computed via EUR conversion then converted back)."""
+        invoice = ImportUnit.objects.create(price=Decimal(200), currency="USD")
+        # price_eur=169.49, excess=19.49, duty=1.949, vat=4.288, tax_eur=6.237,
+        # tax_usd=6.237*1.18=7.36 → quantize to 0.1 → 7.4
+        tax = invoice.calculate_tax()
+        assert abs(tax - Decimal("7.4")) < TOLERANCE
+
     def test_missing_constants_raises(self) -> None:
         """Test that missing customs constants raises CustomsConfigError."""
         CustomsConstants.objects.all().delete()
