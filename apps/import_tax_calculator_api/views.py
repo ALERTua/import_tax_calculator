@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+from django.utils.cache import patch_cache_control
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -17,9 +18,9 @@ if TYPE_CHECKING:
 class ImportUnitModelAPIView(APIView):
     """API view for ImportUnit model operations."""
 
-    def post(self, request: HttpRequest) -> Response:
-        """Calculate import tax for the posted ImportUnit payload."""
-        serializer = ImportUnitSerializer(data=request.data)
+    def get(self, request: HttpRequest) -> Response:
+        """Calculate import tax for the given price + currency query params."""
+        serializer = ImportUnitSerializer(data=request.query_params)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -34,4 +35,8 @@ class ImportUnitModelAPIView(APIView):
                 status=status.HTTP_503_SERVICE_UNAVAILABLE,
             )
 
-        return Response({"tax": tax, "currency": currency})
+        response = Response({"tax": tax, "currency": currency})
+        # Pure function of (price, currency) + rarely-changing admin config.
+        # Stale results self-recover within max_age.
+        patch_cache_control(response, public=True, max_age=60)
+        return response
