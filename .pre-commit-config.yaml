@@ -40,3 +40,12 @@ repos:
       - id: validate-pyproject
         # Optional extra validations from SchemaStore:
         additional_dependencies: [ "validate-pyproject-schema-store[all]" ]
+
+  - repo: local
+    hooks:
+      - id: django-makemigrations-check
+        name: django makemigrations --check
+        entry: uv run python manage.py makemigrations --check --dry-run
+        language: system
+        pass_filenames: false
+        files: '(models\.py|/migrations/.*\.py)$'

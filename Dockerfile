@@ -72,11 +72,14 @@ USER $USERNAME
 
 COPY --from=development --chown=$USERNAME:$USERNAME $APP_DIR $APP_DIR
 
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
-    CMD uv run python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:${PORT}/health', timeout=1)"
+RUN SECRET_KEY=build-time-placeholder python manage.py collectstatic --noinput
 
-CMD \
-  uv run python manage.py makemigrations --noinput ; \
-  uv run python manage.py migrate --noinput ; \
-  uv run python manage.py collectstatic --noinput ; \
-  uv run gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers ${WORKERS} --log-level=info
+HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=5 \
+    CMD python -c "import urllib.request as u; u.urlopen('http://127.0.0.1:${PORT}/health/', timeout=1)"
+
+CMD python manage.py migrate --noinput \
+    && exec gunicorn config.wsgi:application \
+        --bind 0.0.0.0:${PORT} \
+        --workers ${WORKERS} \
+        --access-logfile - \
+        --log-level info
