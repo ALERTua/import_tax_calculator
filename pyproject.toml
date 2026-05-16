@@ -3,16 +3,16 @@ name = "import-tax-calc"
 version = "0"
 description = "Import Tax Calculator for Ukraine"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = "==3.14.*"
 dependencies = [
-    "django>=6.0.3",
-    "django-cors-headers>=4.9.0",
-    "djangorestframework>=3.17.0",
+    "django",
+    "django-cors-headers",
+    "djangorestframework",
     "gunicorn",
-    "psycopg[binary,pool]>=3.3.3",
+    "psycopg[binary,pool]",
 ]
 
 [dependency-groups]
 dev = [
-    "djangorestframework-stubs>=3.16.8",
+    "djangorestframework-stubs",
 ]
