@@ -45,7 +45,9 @@ repos:
     hooks:
       - id: django-makemigrations-check
         name: django makemigrations --check
-        entry: uv run python manage.py makemigrations --check --dry-run
+        entry: uv run --env-file .env python manage.py makemigrations --check --dry-run
         language: system
         pass_filenames: false
         files: '(models\.py|/migrations/.*\.py)$'
+        env:
+          DEBUG: True

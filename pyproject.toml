@@ -15,4 +15,5 @@ dependencies = [
 [dependency-groups]
 dev = [
     "djangorestframework-stubs",
+    "pytest",
 ]

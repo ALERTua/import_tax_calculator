@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    replaces = [('import_tax_calculator', '0001_initial'), ('import_tax_calculator', '0002_exchangerate')]
+    initial = True
 
     dependencies = [
     ]

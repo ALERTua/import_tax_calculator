@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.views.generic import FormView
 
 from .forms import ImportUnitForm
-from .models import ImportUnit
+from .models import CustomsConfigError, ImportUnit
 
 
 class CalculateCustomsView(FormView):
@@ -15,22 +15,16 @@ class CalculateCustomsView(FormView):
     form_class = ImportUnitForm
 
     def form_valid(self, form: ImportUnitForm) -> render:
-        """
-        Handle valid form submission and calculate tax.
-
-        Args:
-            form: The validated form instance.
-
-        Returns:
-            Rendered template with the form and calculated tax.
-
-        """
-        price = form.cleaned_data["price"]
-        currency = form.cleaned_data["currency"]
-
-        import_unit = ImportUnit(price=price, currency=currency)
-
-        tax = import_unit.calculate_tax()
+        """Handle valid form submission and calculate tax."""
+        import_unit = ImportUnit(
+            price=form.cleaned_data["price"],
+            currency=form.cleaned_data["currency"],
+        )
+        try:
+            tax = import_unit.calculate_tax()
+        except CustomsConfigError as exc:
+            form.add_error(None, f"Service unavailable: {exc}")
+            return self.form_invalid(form)
 
         return render(self.request, self.template_name, {"form": form, "tax": tax})
 
