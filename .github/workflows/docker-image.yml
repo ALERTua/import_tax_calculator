@@ -20,7 +20,11 @@ concurrency:
 
 jobs:
 
+  test:
+    uses: ./.github/workflows/tests.yml
+
   build-and-publish-latest:
+    needs: test
     runs-on: ubuntu-latest
 
     permissions:
