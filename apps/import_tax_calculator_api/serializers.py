@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from rest_framework.serializers import ChoiceField, DecimalField, Serializer
 
-from ..import_tax_calculator.models import Currency
+from apps.import_tax_calculator.models import Currency
 
 
 class ImportUnitSerializer(Serializer):

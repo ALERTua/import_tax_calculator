@@ -22,15 +22,8 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
-try:
-    from apps.import_tax_calculator.views import CalculateCustomsView, health_check
-    from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
-except ImportError:
-    # noinspection PyUnresolvedReferences
-    from import_tax_calculator.views import CalculateCustomsView, health_check
-
-    # noinspection PyUnresolvedReferences
-    from import_tax_calculator_api.views import ImportUnitModelAPIView
+from apps.import_tax_calculator.views import CalculateCustomsView, health_check
+from apps.import_tax_calculator_api.views import ImportUnitModelAPIView
 
 
 urlpatterns = [

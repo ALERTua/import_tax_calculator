@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from .models import CustomsConstants, ImportUnit
+from .models import CustomsConfigError, CustomsConstants, ExchangeRate, ImportUnit
 
 TOLERANCE = 0.01
 

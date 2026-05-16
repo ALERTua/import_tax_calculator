@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..import_tax_calculator.models import ImportUnit
+from apps.import_tax_calculator.models import CustomsConfigError, ImportUnit
+
 from .serializers import ImportUnitSerializer
 
 if TYPE_CHECKING:
