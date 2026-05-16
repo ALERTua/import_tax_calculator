@@ -17,24 +17,21 @@ if TYPE_CHECKING:
 class ImportUnitModelAPIView(APIView):
     """API view for ImportUnit model operations."""
 
-    def get(self, request: HttpRequest) -> Response:
-        """
-        Handle GET requests to calculate tax for import unit.
+    def post(self, request: HttpRequest) -> Response:
+        """Calculate import tax for the posted ImportUnit payload."""
+        serializer = ImportUnitSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        Args:
-            request: The HTTP request object containing query parameters.
+        price = serializer.validated_data["price"]
+        currency = serializer.validated_data["currency"]
 
-        Returns:
-            Response: JSON response with calculated tax and currency.
+        try:
+            tax = ImportUnit(price=price, currency=currency).calculate_tax()
+        except CustomsConfigError as exc:
+            return Response(
+                {"error": str(exc)},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
 
-        """
-        serializer = ImportUnitSerializer(data=request.query_params)
-        if serializer.is_valid():
-            price = serializer.validated_data["price"]
-            currency = serializer.validated_data["currency"]
-
-            model = ImportUnit(price=price, currency=currency)
-            tax = model.calculate_tax()
-            return Response({"tax": tax, "currency": currency})
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"tax": tax, "currency": currency})

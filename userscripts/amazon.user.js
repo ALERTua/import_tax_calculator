@@ -40,21 +40,26 @@
     // Функція для виконання запиту до API і обробки відповіді
     function getCustomsTax(price, currency) {
         console.info('Customs Tax Calculator: Getting customs tax for price:' + price + ' currency: ' + currency);
-        var apiUrl = 'https://tax.alertua.pp.ua/calculate_api/?price=' + price + '&currency=' + currency;
+        var apiUrl = 'https://tax.alertua.pp.ua/calculate_api/';
         // Виконати запит до API
         GM_xmlhttpRequest({
-            method: "GET",
+            method: "POST",
             url: apiUrl,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            data: JSON.stringify({ price: price, currency: currency }),
             responseType: "json",
             onload: function(response) {
                 if (response.status == 200) {
                     var data = response.response;
                     // Обробити отримані дані та відобразити результат поряд з ціною
-                    var result = data.tax.toFixed(2) + ' ' + data.currency;
+                    var result = parseFloat(data.tax).toFixed(2) + ' ' + data.currency;
                     console.info('Customs Tax Calculator: Price:' + price + ' Currency: ' + currency + ' result: ' + result);
                     displayCustomsTax(result);
                 } else {
-                    console.error('Customs Tax Calculator: Failed to fetch customs tax data');
+                    console.error('Customs Tax Calculator: Failed to fetch customs tax data (status ' + response.status + ')');
                 }
             }
         });
@@ -80,7 +85,12 @@
     if (priceElement) {
         var price_raw = priceElement.textContent.trim();
         var regex = /[+-]?\d+(\.\d+)?/g;
-        var price = price_raw.match(regex).map(function(v) { return parseFloat(v); });
+        var matches = price_raw.match(regex);
+        if (!matches) {
+            console.info('Customs Tax Calculator: Could not parse price from: ' + price_raw);
+            return;
+        }
+        var price = parseFloat(matches[0]);
 
         console.info('Customs Tax Calculator: Price found: ' + price);
 
@@ -90,7 +100,7 @@
                 currency = 'USD';
                 break;
             case "www.amazon.de":
-                currency = 'JPY';
+                currency = 'EUR';
                 break;
             default:
                 throw new Error(`${document.location.hostname} is NOT supported!`);
