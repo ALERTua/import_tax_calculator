@@ -15,10 +15,6 @@ exclude = [
 ]
 
 [lint]
-select = [
-    "ALL",
-]
-
 ignore = [
     "ANN401", # Dynamically typed expressions (typing.Any) are disallowed
     "D203", # no-blank-line-before-class (incompatible with formatter)
