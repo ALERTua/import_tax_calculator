@@ -22,6 +22,10 @@ jobs:
 
   test:
     uses: ./.github/workflows/tests.yml
+    permissions:
+      contents: read
+      # the runner choice in tests.yml joins Tailscale with the GitHub OIDC token
+      id-token: write
 
   build-and-publish-latest:
     needs: test

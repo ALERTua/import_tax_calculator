@@ -10,8 +10,15 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # alert-server runner when it is available, otherwise a GitHub runner
+  pick-runner:
+    uses: ALERTua/ci-workflows/.github/workflows/pick-runner.yml@v1
+    permissions:
+      id-token: write
+
   test:
-    runs-on: ubuntu-latest
+    needs: pick-runner
+    runs-on: ${{ fromJson(needs.pick-runner.outputs.runner) }}
 
     env:
       DEBUG: "True"
