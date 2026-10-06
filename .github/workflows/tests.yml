@@ -18,7 +18,8 @@ jobs:
 
   test:
     needs: pick-runner
-    runs-on: ${{ fromJson(needs.pick-runner.outputs.runner) }}
+    # an empty output still gives a GitHub runner
+    runs-on: ${{ fromJson(needs.pick-runner.outputs.runner || '"ubuntu-latest"') }}
 
     env:
       DEBUG: "True"
