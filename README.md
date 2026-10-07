@@ -22,6 +22,7 @@ Using Django's built-in utility:
 
 ```python
 from django.core.management.utils import get_random_secret_key
+
 print(get_random_secret_key())
 ```
 
@@ -29,6 +30,7 @@ Or using Python's secrets module:
 
 ```python
 import secrets
+
 print(secrets.token_urlsafe(50))
 ```
 
@@ -41,6 +43,16 @@ docker run -e SECRET_KEY=your_generated_secret_key -p 8000:8000 your_image
 The SECRET_KEY is configured in `config/settings.py` using the `SECRET_KEY` environment variable. In DEBUG mode (development), it falls back to an insecure generated key. In production (DEBUG=False), the environment variable is required.
 
 Do not forget to run with --init for SIGTERM to correctly forward to child processes.
+
+### Image tags
+
+Image tags on `ghcr.io/alertua/import_tax_calculator`:
+
+| Tag | What it is |
+|---|---|
+| `latest` | The newest release. A run without a tag uses it. |
+| `X.Y`, `X.Y.Z` | A release line or one exact release. `X.Y` gets each new `X.Y.Z` release. |
+| `edge` | The newest commit of `main`. It can break at any time. |
 
 [Amazon Userscript](userscripts/README.md)
 
