@@ -55,7 +55,7 @@ jobs:
     # the skipped test job of a pull request does not stop the build
     if: ${{ !failure() && !cancelled() }}
     # builds on buildkit of alert-server when it answers through the tailnet, otherwise on GitHub
-    uses: ALERTua/ci-workflows/.github/workflows/docker-build.yml@v4.0.0
+    uses: ALERTua/ci-workflows/.github/workflows/docker-build.yml@v4.1.0
     permissions:
       contents: read # checkout
       packages: write # push of the image to ghcr.io
